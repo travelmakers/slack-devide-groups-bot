@@ -1,0 +1,22 @@
+service: slack-bot
+
+custom:
+  env: ${file(./env.json)} # 환경변수 정보 JSON 파일을 불러온다.
+
+provider:
+  profile: travelmakers
+  name: aws
+  runtime: nodejs18.x
+  region: us-east-1
+  environment:
+    SLACK_BOT_TOKEN: ${self:custom.env.SLACK_BOT_TOKEN}
+    SLACK_SIGNING_SECRET: ${self:custom.env.SLACK_SIGNING_SECRET}
+
+functions:
+  slackBot:
+    handler: handler.handler
+    events:
+      - http:
+          path: slack/events
+          method: post
+          cors: true
